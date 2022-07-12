@@ -1,12 +1,21 @@
 import { Outlet } from "react-router-dom"
-const App = () => {
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 
+export default function App() {
     return (
-        <div>
-            <h1>Navigation Bar Here</h1>
+        <Box >
+            <AppBar >
+                <Toolbar>
+                    <Typography align="center" variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        Video Chat App
+                    </Typography>
+                </Toolbar>
+            </AppBar>
             <Outlet />
-        </div>
-    )
+        </Box>
+    );
 }
-
-export default App

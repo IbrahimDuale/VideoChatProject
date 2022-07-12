@@ -3,7 +3,6 @@ import App from "./App";
 import LoginPage from "./Components/LoginPage";
 import Room from "./Components/Room";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <BrowserRouter>
