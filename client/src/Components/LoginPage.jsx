@@ -1,6 +1,5 @@
 import { Box, Stack, Container, Typography, TextField, Button, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
-
 const Title = {
     textAlign: "center",
 }
@@ -16,7 +15,6 @@ const LoginPageWrapper = {
 const LoginPage = () => {
     let [username, setUsername] = useState("");
     let [roomName, setRoomName] = useState("");
-
     //constructor
     useEffect(() => {
         //TODO

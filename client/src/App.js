@@ -7,15 +7,17 @@ import Typography from '@mui/material/Typography';
 
 export default function App() {
     return (
-        <Box >
-            <AppBar >
-                <Toolbar>
-                    <Typography align="center" variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Video Chat App
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+        <div>
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography align="center" variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            Video Chat App
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+            </Box>
             <Outlet />
-        </Box>
+        </div>
     );
 }
