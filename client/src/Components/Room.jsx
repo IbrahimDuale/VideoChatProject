@@ -1,9 +1,15 @@
+import { useParams, useSearchParams } from "react-router-dom";
+
 
 const Room = () => {
 
+    let { roomName } = useParams();
+    let [searchParams] = useSearchParams();
+    let username = searchParams.get("username");
+
     return (
         <div>
-            Room Page
+            {`Hello ${username} to ${roomName}`}
         </div>
     )
 }

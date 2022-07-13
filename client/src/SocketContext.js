@@ -11,16 +11,30 @@ const SocketContextProvider = ({ children }) => {
     const socket = useRef(null);
     //set to true socket is connected to server
     let [socketConnected, setSocketConnected] = useState(false);
+
     //constructor
     useEffect(() => {
         //creating websocket connection to server
         socket.current = io(URL);
         socket.current.on("connect", () => {
+            console.log("socket connected")
             setSocketConnected(true);
         })
 
-        socket.current.on("disconnect", () => {
+        //outputs all websocket events for debugging purposes
+        socket.current.onAny((event, ...args) => {
+            console.log(event, args);
+        });
+
+        //emited if the socket disconnects
+        socket.current.on("disconnect", (reason) => {
+            console.log(`socket disconnected with reason: ${reason}`);
             setSocketConnected(false);
+        })
+
+        //emited if a low level connection cannot be established by the socket
+        socket.current.on("connect_error", () => {
+            console.log("low level connection error")
         })
 
         const socketCurrent = socket.current;
