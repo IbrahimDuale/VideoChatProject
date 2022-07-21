@@ -28,6 +28,10 @@ let ANSWER_CALL = "ANSWER_CALL";
 let CALLERS_SIGNAL_DATA = "CALLERS_SIGNAL_DATA"
 //notifies users in room when a user leaves 
 let USER_LEFT = "USER_LEFT";
+//event fires when user sends a message
+let SEND_MESSAGE = "SEND_MESSAGE";
+//event fires when user recieves a new message
+let RECIEVED_MESSAGE = "RECIEVED_MESSAGE";
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -63,6 +67,11 @@ io.on('connection', (socket) => {
     //caller sending signal data to callee
     socket.on(CALLERS_SIGNAL_DATA, ({ fromId, toId, data }) => {
         io.to(toId).emit(CALLERS_SIGNAL_DATA, { fromId, data });
+    })
+
+    //user sending a message to people in the room
+    socket.on(SEND_MESSAGE, ({ id, username, msg, roomName }) => {
+        io.to(roomName).emit(RECIEVED_MESSAGE, { id, username, msg });
     })
 });
 

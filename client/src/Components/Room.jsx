@@ -4,6 +4,7 @@ import SocketContext from "../SocketContext";
 import Videos from "./Videos";
 import Peer from "simple-peer";
 import { Button } from "@mui/material";
+import Messages from './Messages';
 
 //event sent when user wants to connect to people in the room
 let CALL_USER = "CALL_USER"
@@ -16,6 +17,13 @@ let CALLERS_SIGNAL_DATA = "CALLERS_SIGNAL_DATA"
 
 //event fires when a user left
 let USER_LEFT = "USER_LEFT";
+
+//event fires when user sends a message
+let SEND_MESSAGE = "SEND_MESSAGE";
+
+//event fires when user recieves a new message
+let RECIEVED_MESSAGE = "RECIEVED_MESSAGE";
+
 const Room = () => {
 
     let { roomName } = useParams();
@@ -24,9 +32,13 @@ const Room = () => {
 
     let { isConnected, socket } = useContext(SocketContext);
 
-    //if user cannot connect with people in the room
+    //own stream data
     let [stream, setStream] = useState(null);
+    //contains data of all other users in the room
     let [users, setUsers] = useState([]);
+    //contains history of all messages sent from the moment the user entered the room
+    let [messages, setMessages] = useState([]);
+
 
 
     //constructor
@@ -47,6 +59,7 @@ const Room = () => {
             socket.off(ANSWER_CALL);
             socket.off(CALLERS_SIGNAL_DATA);
             socket.off(USER_LEFT);
+            socket.off(RECIEVED_MESSAGE);
 
             //new user wants to connect
             socket.on(CALL_USER, ({ fromId, fromUsername }) => {
@@ -148,7 +161,23 @@ const Room = () => {
                     }
                 })
             })
+
+            //message recieved from server
+            socket.on(RECIEVED_MESSAGE, ({ username, msg, id }) => {
+                let fromSelf = false;
+                //recieved on message
+                if (socket.id === id)
+                    fromSelf = true;
+                setMessages((prevMessages) => {
+                    let newMessages = [...prevMessages];
+                    newMessages.push({ fromSelf, username, message: msg, timeStamp: new Date() });
+                    return newMessages;
+                })
+
+
+            })
         }
+
 
         //cleanup
         return () => {
@@ -157,6 +186,7 @@ const Room = () => {
                 socket.off(ANSWER_CALL);
                 socket.off(CALLERS_SIGNAL_DATA);
                 socket.off(USER_LEFT);
+                socket.off(RECIEVED_MESSAGE);
             }
         }
     }, [isConnected, stream, socket, username])
@@ -166,10 +196,15 @@ const Room = () => {
         socket.emit(CALL_USER, { fromId: socket.id, roomName, fromUsername: username });
     }
 
+    let sendMessage = (msg) => {
+        socket.emit(SEND_MESSAGE, { username, id: socket.id, msg, roomName });
+    }
+
     return (
         <div>
             <Videos users={users} me={{ id: 0, name: username, stream }} />
             <Button variant="contained" size="large" onClick={() => handleConnect()}>Connect with Users</Button>
+            <Messages messages={messages} sendMessage={sendMessage} />
         </div>
     )
 }
