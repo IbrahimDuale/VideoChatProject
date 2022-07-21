@@ -25,7 +25,6 @@ let SEND_MESSAGE = "SEND_MESSAGE";
 let RECIEVED_MESSAGE = "RECIEVED_MESSAGE";
 
 const Room = () => {
-
     let { roomName } = useParams();
     let [searchParams] = useSearchParams();
     let username = searchParams.get("username");
@@ -38,8 +37,6 @@ const Room = () => {
     let [users, setUsers] = useState([]);
     //contains history of all messages sent from the moment the user entered the room
     let [messages, setMessages] = useState([]);
-
-
 
     //constructor
     useEffect(() => {
@@ -66,13 +63,18 @@ const Room = () => {
                 //return if calling self
                 if (fromId === socket.id)
                     return;
+                //already have a connection with user
+                if (users.find((user) => user.id === fromId))
+                    return;
                 //webrtc connections 
                 let peer = new Peer({ initiator: true, stream });
 
-                //saves connection to callers socket id
                 setUsers((prevUsers) => {
+
                     let newUsers = [...prevUsers]
                     newUsers.push({ id: fromId, username: fromUsername, peer });
+
+                    //saves connection to callers socket id
                     return newUsers;
                 });
 
@@ -83,7 +85,6 @@ const Room = () => {
 
                 //adds callers stream to there object
                 peer.on("stream", stream => {
-                    console.log("recieved stream");
                     setUsers((prevUsers) => {
                         let newUsers = [...prevUsers];
                         let user = newUsers.find((user) => user.id === fromId);
@@ -92,6 +93,7 @@ const Room = () => {
                         return newUsers;
                     })
                 });
+
 
             });
 
@@ -189,7 +191,7 @@ const Room = () => {
                 socket.off(RECIEVED_MESSAGE);
             }
         }
-    }, [isConnected, stream, socket, username])
+    }, [isConnected, stream, socket, username, users])
 
     //connects with users in call
     let handleConnect = () => {
